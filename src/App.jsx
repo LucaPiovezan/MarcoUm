@@ -507,7 +507,7 @@ function AboutSection() {
   )
 }
 
-function PlanCard({ num, tag, name, price, period, features, deadline, featured }) {
+function PlanCard({ num, tag, name, price, period, features, deadline, featured, customPrice }) {
   const cardRef = useRef(null)
   return (
     <div ref={cardRef} className="plan-card" style={{
@@ -535,8 +535,20 @@ function PlanCard({ num, tag, name, price, period, features, deadline, featured 
 
       <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.26em", textTransform: "uppercase", color: "#c0392b", marginBottom: 20 }}>{tag}</div>
       <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "2.2rem", fontWeight: 900, textTransform: "uppercase", color: featured ? "#fff" : "#111", marginBottom: 4, lineHeight: 1 }}>{name}</div>
-      <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "4rem", fontWeight: 900, color: featured ? "#fff" : "#111", lineHeight: 1, margin: "20px 0 4px", letterSpacing: "-0.02em" }}>
-        <sup style={{ fontSize: "1.2rem", fontWeight: 700, color: "#c0392b", verticalAlign: "super" }}>R$</sup>{price}
+      <div style={{
+        fontFamily: "'Barlow Condensed',sans-serif",
+        fontSize: customPrice ? "clamp(1.5rem, 4vw, 2.2rem)" : "4rem",
+        fontWeight: 900,
+        color: featured ? "#fff" : "#111",
+        lineHeight: 1,
+        margin: "20px 0 4px",
+        letterSpacing: "-0.02em"
+      }}>
+        {customPrice ? (
+          <span style={{ color: "#c0392b", fontStyle: "italic" }}>{price}</span>
+        ) : (
+          <><sup style={{ fontSize: "1.2rem", fontWeight: 700, color: "#c0392b", verticalAlign: "super" }}>R$</sup>{price}</>
+        )}
       </div>
       <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: featured ? "rgba(255,255,255,.3)" : "#999", marginBottom: 32 }}>{period}</div>
       <div style={{ height: 1, background: featured ? "rgba(255,255,255,.08)" : "rgba(0,0,0,.08)", marginBottom: 24 }} />
@@ -580,6 +592,20 @@ const PLANS = [
       { t: "Criação de posts e stories", off: 1 },
     ]
   },
+  {
+    // ← NOVO: card Sistemas & Apps, preço personalizado conforme complexidade
+    num: "05", tag: "Sob medida", name: "Sistemas & Apps", price: "Personalizado", period: "De acordo com a complexidade", deadline: "Prazo definido conforme escopo", customPrice: true,
+    features: [
+      { t: "Sistemas web personalizados" },
+      { t: "Aplicativos mobile (Flutter)" },
+      { t: "Painéis administrativos e dashboards" },
+      { t: "Integração com banco de dados" },
+      { t: "Automatizações e ferramentas internas" },
+      { t: "Login, permissões e múltiplos usuários" },
+      { t: "Reunião de descoberta incluída" },
+      { t: "Orçamento sob análise do escopo" },
+    ]
+  },
 ]
 
 function PricingSection() {
@@ -592,8 +618,17 @@ function PricingSection() {
         <p style={{ fontSize: "0.82rem", color: "#888", maxWidth: 200, textAlign: "right", lineHeight: 1.6, fontWeight: 300 }}>Transparência total, entrega no prazo.</p>
       </div>
 
-      {/* ← 4 colunas para acomodar o novo card */}
-      <div className="rv plans-grid" style={{ display: "grid", gap: 20, transitionDelay: ".08s", alignItems: "start" }}>
+      {/* ← 5 planos agora: grid auto-adaptável, sempre legível em qualquer largura de tela */}
+      <div
+        className="rv plans-grid"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+          gap: 20,
+          transitionDelay: ".08s",
+          alignItems: "start"
+        }}
+      >
         {PLANS.map((p, i) => (
           <div key={i}>
             <PlanCard {...p} />
