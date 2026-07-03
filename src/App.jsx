@@ -727,7 +727,11 @@ function SkillsSection() {
         {SKILLS.map((s) => (
           <Card3D key={s.n} style={{ background: "rgba(255,255,255,.03)", borderTop: "2px solid rgba(255,255,255,.06)" }}>
             <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,.2)", marginBottom: 24 }}>{s.n}</div>
+<<<<<<< HEAD
             <div className="skill-name" style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.02em", color: "#fff", marginBottom: 8, lineHeight: 1 }}>{s.name}</div>
+=======
+            <div className="skill-name" style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "1.5rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.02em", color: "#fff", marginBottom: 8, lineHeight: 1 }}>{s.name}</div>
+>>>>>>> 19c8dc0a4a2cde171808627080589e9f2bab2a50
             <div style={{ fontSize: "0.75rem", lineHeight: 1.6, color: "rgba(255,255,255,.4)", fontWeight: 300 }}>{s.desc}</div>
           </Card3D>
         ))}
