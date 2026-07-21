@@ -401,7 +401,6 @@ function HeroSection() {
 
       <div className="hero-scroll" style={{ position: "absolute", bottom: 40, fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(255,255,255,.25)", display: "flex", alignItems: "center", gap: 12, animation: "fadeUp .3s .25s cubic-bezier(.16,1,.3,1) both", zIndex: 2 }}>
         <span style={{ width: 1, height: 44, background: "linear-gradient(to bottom, #c0392b, transparent)", animation: "pulse 2s ease-in-out infinite", display: "block" }} />
-        Scroll
       </div>
     </section>
   )
@@ -571,7 +570,7 @@ const PLANS = [
     features: [{ t: "Design exclusivo" }, { t: "Adaptado para celular" }, { t: "Formulário de contato / captação de leads" }, { t: "Conexão com WhatsApp" }, { t: "Otimização básica para Google (SEO)" }, { t: "Seções: banner, sobre, serviços, contato" }, { t: "Certificado SSL (HTTPS)" }, { t: "Até 6 páginas internas", off: 1 }, { t: "Seção de agendamento online", off: 1 }, { t: "Blog integrado", off: 1 }, { t: "Treinamento de uso incluído", off: 1 }]
   },
   {
-    num: "02", tag: "Ideal para empresas", name: "Site Institucional Básico", price: "600–1.200", period: "Pagamento único", deadline: "Entrega em 10–15 dias úteis",
+    num: "02", tag: "Ideal para empresas", name: "Site Institucional Básico", price: "800", period: "Pagamento único", deadline: "Entrega em 10–15 dias úteis",
     features: [{ t: "Design exclusivo" }, { t: "Adaptado para celular" }, { t: "Formulário de contato / captação de leads" }, { t: "Conexão com WhatsApp" }, { t: "Otimização básica para Google (SEO)" }, { t: "3 a 5 páginas (Home, Sobre, Serviços, Contato, Blog)" }, { t: "Certificado SSL (HTTPS)" }, { t: "Seção de agendamento online", off: 1 }, { t: "Treinamento de uso incluído", off: 1 }]
   },
   {
