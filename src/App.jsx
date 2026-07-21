@@ -507,12 +507,12 @@ function AboutSection() {
   )
 }
 
-function PlanCard({ num, tag, name, price, period, features, deadline, featured, customPrice }) {
+function PlanCard({ num, tag, name, price, period, features, deadline, featured, customPrice, wide }) {
   const cardRef = useRef(null)
   return (
     <div ref={cardRef} className="plan-card" style={{
       background: featured ? "#111" : "#ece8df",
-      padding: "40px 36px",
+      padding: wide ? "24px 36px" : "40px 36px",
       position: "relative",
       overflow: "hidden",
       borderTop: `3px solid ${featured ? "#c0392b" : "#111"}`,
@@ -533,7 +533,7 @@ function PlanCard({ num, tag, name, price, period, features, deadline, featured,
         pointerEvents: "none", lineHeight: 1
       }}>{num}</div>
 
-      <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.26em", textTransform: "uppercase", color: "#c0392b", marginBottom: 20 }}>{tag}</div>
+      <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.26em", textTransform: "uppercase", color: "#c0392b", marginBottom: wide ? 8 : 20 }}>{tag}</div>
       <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "2.2rem", fontWeight: 900, textTransform: "uppercase", color: featured ? "#fff" : "#111", marginBottom: 4, lineHeight: 1 }}>{name}</div>
       <div style={{
         fontFamily: "'Barlow Condensed',sans-serif",
@@ -541,7 +541,7 @@ function PlanCard({ num, tag, name, price, period, features, deadline, featured,
         fontWeight: 900,
         color: featured ? "#fff" : "#111",
         lineHeight: 1,
-        margin: "20px 0 4px",
+        margin: wide ? "8px 0 4px" : "20px 0 4px",
         letterSpacing: "-0.02em"
       }}>
         {customPrice ? (
@@ -550,11 +550,11 @@ function PlanCard({ num, tag, name, price, period, features, deadline, featured,
           <><sup style={{ fontSize: "1.2rem", fontWeight: 700, color: "#c0392b", verticalAlign: "super" }}>R$</sup>{price}</>
         )}
       </div>
-      <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: featured ? "rgba(255,255,255,.3)" : "#999", marginBottom: 32 }}>{period}</div>
+      <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: featured ? "rgba(255,255,255,.3)" : "#999", marginBottom: wide ? 16 : 32 }}>{period}</div>
       <div style={{ height: 1, background: featured ? "rgba(255,255,255,.08)" : "rgba(0,0,0,.08)", marginBottom: 24 }} />
-      <ul style={{ listStyle: "none" }}>
+      <ul style={{ listStyle: "none", display: "flex", flexDirection: wide ? "row" : "column", flexWrap: "wrap", gap: wide ? "4px 16px" : 0 }}>
         {features.map((f, i) => (
-          <li key={i} style={{ display: "flex", gap: 10, padding: "8px 0", fontSize: "0.82rem", fontWeight: 500, color: f.off ? (featured ? "rgba(255,255,255,.35)" : "#999") : (featured ? "rgba(255,255,255,.65)" : "#444"), borderBottom: `1px solid ${featured ? "rgba(255,255,255,.06)" : "rgba(0,0,0,.06)"}` }}>
+          <li key={i} style={{ display: "flex", gap: 10, padding: wide ? "4px 0" : "8px 0", fontSize: "0.82rem", fontWeight: 500, color: f.off ? (featured ? "rgba(255,255,255,.35)" : "#999") : (featured ? "rgba(255,255,255,.65)" : "#444"), borderBottom: wide ? "none" : `1px solid ${featured ? "rgba(255,255,255,.06)" : "rgba(0,0,0,.06)"}`, flex: wide ? "0 0 33%" : "none" }}>
             <span style={{ flexShrink: 0, fontSize: "0.68rem", marginTop: 2, color: f.off ? "#666" : "#c0392b", fontWeight: 700 }}>{f.off ? "–" : "✓"}</span>
             {f.t}
           </li>
@@ -571,16 +571,20 @@ const PLANS = [
     features: [{ t: "Design exclusivo" }, { t: "Adaptado para celular" }, { t: "Formulário de contato / captação de leads" }, { t: "Conexão com WhatsApp" }, { t: "Otimização básica para Google (SEO)" }, { t: "Seções: banner, sobre, serviços, contato" }, { t: "Certificado SSL (HTTPS)" }, { t: "Até 6 páginas internas", off: 1 }, { t: "Seção de agendamento online", off: 1 }, { t: "Blog integrado", off: 1 }, { t: "Treinamento de uso incluído", off: 1 }]
   },
   {
-    num: "02", tag: "Mais completo", name: "Site Completo", price: "1.500", period: "Pagamento único", deadline: "Entrega em 21 dias úteis", featured: true,
+    num: "02", tag: "Ideal para empresas", name: "Site Institucional Básico", price: "600–1.200", period: "Pagamento único", deadline: "Entrega em 10–15 dias úteis",
+    features: [{ t: "Design exclusivo" }, { t: "Adaptado para celular" }, { t: "Formulário de contato / captação de leads" }, { t: "Conexão com WhatsApp" }, { t: "Otimização básica para Google (SEO)" }, { t: "3 a 5 páginas (Home, Sobre, Serviços, Contato, Blog)" }, { t: "Certificado SSL (HTTPS)" }, { t: "Seção de agendamento online", off: 1 }, { t: "Treinamento de uso incluído", off: 1 }]
+  },
+  {
+    num: "03", tag: "Mais completo", name: "Site Completo", price: "1.500", period: "Pagamento único", deadline: "Entrega em 21 dias úteis", featured: true,
     features: [{ t: "Design exclusivo" }, { t: "Adaptado para celular" }, { t: "Formulário de contato / captação de leads" }, { t: "Conexão com WhatsApp" }, { t: "Otimização básica para Google (SEO)" }, { t: "Seções: banner, sobre, serviços, contato" }, { t: "Certificado SSL (HTTPS)" }, { t: "Até 6 páginas internas" }, { t: "Seção de agendamento online" }, { t: "Blog integrado" }, { t: "Treinamento de uso incluído" }]
   },
   {
-    num: "03", tag: "Presença local", name: "Google Meu Neg.", price: "150", period: "Por mês", deadline: "Gestão mensal contínua",
+    num: "04", tag: "Presença local", name: "Google Meu Neg.", price: "150", period: "Por mês", deadline: "Gestão mensal contínua",
     features: [{ t: "Criação e configuração completa do perfil" }, { t: "Otimização para aparecer no Google Maps" }, { t: "Resposta a avaliações e comentários" }, { t: "Publicação de posts / novidades — até 4 por mês" }, { t: "Atualização de informações (promoções, horários)" }, { t: "Relatório mensal de desempenho" }, { t: "SEO local e palavras-chave regionais" }]
   },
   {
     // ← NOVO: card Instagram Pro
-    num: "04", tag: "Presença social", name: "Instagram Profissional", price: "250", period: "Pagamento único + gestão opcional", deadline: "Entrega em 5 dias úteis",
+    num: "05", tag: "Presença social", name: "Instagram Profissional", price: "250", period: "Pagamento único + gestão opcional", deadline: "Entrega em 5 dias úteis",
     features: [
       { t: "Criação completa do perfil profissional" },
       { t: "Bio otimizada com palavras-chave do seu negócio" },
@@ -594,7 +598,7 @@ const PLANS = [
   },
   {
     // ← NOVO: card Sistemas & Apps, preço personalizado conforme complexidade
-    num: "05", tag: "Sob medida", name: "Sistemas & Apps", price: "Personalizado", period: "De acordo com a complexidade", deadline: "Prazo definido conforme escopo", customPrice: true,
+    num: "06", tag: "Sob medida", name: "Sistemas & Apps", price: "Personalizado", period: "De acordo com a complexidade", deadline: "Prazo definido conforme escopo", customPrice: true,
     features: [
       { t: "Sistemas web personalizados" },
       { t: "Aplicativos mobile (Flutter)" },
@@ -618,22 +622,40 @@ function PricingSection() {
         <p style={{ fontSize: "0.82rem", color: "#888", maxWidth: 200, textAlign: "right", lineHeight: 1.6, fontWeight: 300 }}>Transparência total, entrega no prazo.</p>
       </div>
 
-      {/* ← 5 planos agora: grid auto-adaptável, sempre legível em qualquer largura de tela */}
-      <div
-        className="rv plans-grid"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-          gap: 20,
-          transitionDelay: ".08s",
-          alignItems: "start"
-        }}
-      >
-        {PLANS.map((p, i) => (
-          <div key={i}>
-            <PlanCard {...p} />
-          </div>
-        ))}
+      {/* ← 6 planos: 4 em grid no topo, 2 empilhados verticalmente embaixo */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        <div
+          className="rv plans-grid"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gap: 20,
+            transitionDelay: ".08s",
+            alignItems: "start"
+          }}
+        >
+          {PLANS.slice(0, 4).map((p, i) => (
+            <div key={i}>
+              <PlanCard {...p} />
+            </div>
+          ))}
+        </div>
+        <div
+          className="rv"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 20,
+            transitionDelay: ".08s",
+            width: "100%"
+          }}
+        >
+          {PLANS.slice(4).map((p, i) => (
+            <div key={i} style={{ width: "100%" }}>
+              <PlanCard {...p} wide />
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="rv extras-grid" style={{ display: "grid", gap: 20, marginTop: 20, transitionDelay: ".14s" }}>
