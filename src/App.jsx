@@ -399,9 +399,7 @@ function HeroSection() {
         ))}
       </div>
 
-      <div className="hero-scroll" style={{ position: "absolute", bottom: 40, fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(255,255,255,.25)", display: "flex", alignItems: "center", gap: 12, animation: "fadeUp .3s .25s cubic-bezier(.16,1,.3,1) both", zIndex: 2 }}>
-        <span style={{ width: 1, height: 44, background: "linear-gradient(to bottom, #c0392b, transparent)", animation: "pulse 2s ease-in-out infinite", display: "block" }} />
-      </div>
+
     </section>
   )
 }
