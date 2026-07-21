@@ -118,8 +118,10 @@ export default function PortfolioPage() {
           PORTFOLIO ✦
         </div>
 
+        <Link to="/" style={{ position: "absolute", top: 24, left: 24, zIndex: 3, fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,.5)", textDecoration: "none", display: "flex", alignItems: "center", gap: 8 }}>
+          ← Voltar
+        </Link>
         <div style={{ position: "relative", zIndex: 1, maxWidth: 1200 }}>
-          <div
             style={{
               fontFamily: "'Barlow Condensed',sans-serif",
               fontSize: "0.65rem",
