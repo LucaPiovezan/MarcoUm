@@ -2,7 +2,7 @@ export const PORTFOLIO = [
   {
     id: 1,
     title: "Rafael Ildefonso",
-    description: "Site pessoal / portfólio de desenvolvimento",
+    description: "Site pessoal / portfólio",
     url: "https://rafaelildefonso.vercel.app/",
     image: "/portfolio/rafaelildefonso.png",
   },
@@ -44,8 +44,36 @@ export const PORTFOLIO = [
   {
     id: 7,
     title: "Luca Dev",
-    description: "Portfólio pessoal de desenvolvimento",
+    description: "Portfólio pessoal",
     url: "https://lucapiovezan.github.io/luca.dev/",
     image: "/portfolio/luca-dev.png",
+  },
+  {
+    id: 8,
+    title: "Henrique Santos",
+    description: "Portfólio pessoal",
+    url: "https://reposit-rio-comercial.vercel.app/",
+    image: "/portfolio/henrique-santos.png",
+  },
+  {
+    id: 9,
+    title: "Florenza",
+    description: "Marca de perfumes / bem-estar",
+    url: "https://henriquechr11.github.io/florenza/",
+    image: "/portfolio/florenza.png",
+  },
+  {
+    id: 10,
+    title: "Save the Earth",
+    description: "Preservação ambiental / causas verdes",
+    url: "https://save-the-earth-xi.vercel.app/",
+    image: "/portfolio/save-the-earth.png",
+  },
+  {
+    id: 11,
+    title: "Cripto Hive",
+    description: "Dashboard de criptomoedas",
+    url: "https://cripto-hive.vercel.app/",
+    image: "/portfolio/cripto-hive.png",
   },
 ]
