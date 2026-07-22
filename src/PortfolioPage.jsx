@@ -122,7 +122,7 @@ export default function PortfolioPage() {
           ← Voltar
         </Link>
         <div style={{ position: "relative", zIndex: 1, maxWidth: 1200 }}>
-            style={{
+            <div style={{
               fontFamily: "'Barlow Condensed',sans-serif",
               fontSize: "0.65rem",
               fontWeight: 700,
