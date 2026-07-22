@@ -1,3 +1,4 @@
+import * as THREE from "three"
 import { useState, useEffect, useRef } from "react"
 import { Routes, Route, Link, useLocation } from "react-router-dom"
 import { Analytics } from "@vercel/analytics/react"
@@ -20,8 +21,22 @@ function ProgressBar() {
 
 function useReveal() {
   useEffect(() => {
-    const io = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("in") }), { threshold: 0.07 })
-    setTimeout(() => document.querySelectorAll(".rv").forEach(el => io.observe(el)), 100)
+    const io = new IntersectionObserver(
+      entries => entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add("in")
+      }),
+      { threshold: 0 }
+    )
+    setTimeout(() => {
+      document.querySelectorAll(".rv").forEach(el => {
+        const rect = el.getBoundingClientRect()
+        if (rect.top < window.innerHeight) {
+          el.classList.add("in")
+        } else {
+          io.observe(el)
+        }
+      })
+    }, 100)
     return () => io.disconnect()
   }, [])
 }
@@ -39,18 +54,13 @@ function ThreeHero() {
     }, { threshold: 0 })
     if (mount) observer.observe(mount)
 
-    if (window.__THREE_LOADED) { initScene(); return }
-    const s = document.createElement("script")
-    s.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
-    s.onload = () => { window.__THREE_LOADED = true; initScene() }
-    document.head.appendChild(s)
+    initScene()
 
     function isMobile() {
       return window.innerWidth < 768
     }
 
     function initScene() {
-      const THREE = window.THREE
       if (!mount || sceneRef.current) return
 
       const mobile = isMobile()
@@ -262,7 +272,7 @@ function Header() {
       <Link to="/" style={{ display: "flex", alignItems: "center", padding: "0 24px", borderRight: "1px solid rgba(255,255,255,.1)", textDecoration: "none" }}>
         <img src="/logo_full_cover.png" alt="Marco Um" width={131} height={40} style={{ display: "block" }} />
       </Link>
-      <nav className="desktop-nav" style={{ display: "flex", marginLeft: "auto" }}>
+      <nav className="desktop-nav" style={{ marginLeft: "auto" }}>
         {links.map(([h, l]) => {
           if (h === null) return (
             <Link key={l} to="/portfolio" style={{
@@ -275,7 +285,7 @@ function Header() {
             </Link>
           )
           return (
-            <a key={h} href={"/" + h} style={{ display: "flex", alignItems: "center", padding: "0 22px", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: h === "#contato" ? "#fff" : "rgba(255,255,255,.5)", textDecoration: "none", borderLeft: "1px solid rgba(255,255,255,.07)", background: h === "#contato" ? "#c0392b" : "transparent" }}>
+            <a key={h} href={h} style={{ display: "flex", alignItems: "center", padding: "0 22px", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: h === "#contato" ? "#fff" : "rgba(255,255,255,.5)", textDecoration: "none", borderLeft: "1px solid rgba(255,255,255,.07)", background: h === "#contato" ? "#c0392b" : "transparent" }}>
               {l}
             </a>
           )
@@ -298,7 +308,7 @@ function Header() {
               }}>{l}</Link>
             )
             return (
-              <a key={h} href={"/" + h} style={{
+              <a key={h} href={h} style={{
                 display: "block", padding: "16px 24px", fontSize: "0.82rem", fontWeight: 700,
                 letterSpacing: "0.2em", textTransform: "uppercase", textDecoration: "none",
                 color: h === "#contato" ? "#fff" : "rgba(255,255,255,.7)",
@@ -315,16 +325,14 @@ function Header() {
 
 function HeroSection() {
   return (
-    <section style={{ minHeight: "100vh", background: "#111", position: "relative", overflow: "hidden", display: "flex", alignItems: "center" }}>
+    <section className="hero-section" style={{ minHeight: "100vh", background: "#111", position: "relative", overflow: "hidden", display: "flex", alignItems: "center" }}>
       <ThreeHero />
 
       <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px)", backgroundSize: "60px 60px", pointerEvents: "none" }} />
 
-
-      <div style={{
+      <div className="hero-content" style={{
         position: "relative",
         zIndex: 2,
-        padding: "120px 60px 80px",
         transform: "translateY(calc(var(--scroll-y-smooth) * 0.2))",
         opacity: "max(0, calc(1 - var(--scroll-y-smooth) / 600px))",
         transition: "transform 0s, opacity 0s"
@@ -351,16 +359,32 @@ function HeroSection() {
         </p>
         <div style={{ animation: "fadeUp .3s .15s cubic-bezier(.16,1,.3,1) both", display: "flex", gap: 3, flexWrap: "wrap" }}>
           <a href="#servicos" style={{ background: "#c0392b", color: "#fff", fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", padding: "16px 36px", textDecoration: "none" }}>Ver planos →</a>
-          <a href="#contato" style={{ background: "transparent", color: "rgba(255,255,255,.6)", fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", padding: "16px 36px", textDecoration: "none", border: "1.5px solid rgba(255,255,255,.15)" }}>Falar agora</a>
+          {/* ← CORRIGIDO: href direto pro WhatsApp, target _blank para abrir fora */}
+          <a
+            href="https://wa.me/5531985979676"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ background: "transparent", color: "rgba(255,255,255,.6)", fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", padding: "16px 36px", textDecoration: "none", border: "1.5px solid rgba(255,255,255,.15)" }}
+          >
+            Falar agora
+          </a>
+        </div>
+
+        <div className="hero-stats-mobile" style={{ display: "none", marginTop: 32, gap: 2, flexDirection: "column" }}>
+          {[["7", "d", "Landing Page"], ["21", "d", "Site Completo"], ["2", "×", "Revisões incl."]].map(([n, s, l]) => (
+            <div key={l} style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.07)", padding: "14px 20px", borderLeft: "3px solid #c0392b", display: "flex", alignItems: "center", gap: 16 }}>
+              <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "2rem", fontWeight: 900, color: "#fff", lineHeight: 1, letterSpacing: "-0.02em" }}>{n}<span style={{ fontSize: "0.9rem", color: "#c0392b" }}>{s}</span></div>
+              <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,.3)" }}>{l}</div>
+            </div>
+          ))}
         </div>
       </div>
 
-      <div style={{
+      <div className="hero-stats" style={{
         position: "absolute",
         right: 60,
         top: "50%",
         transform: "translateY(calc(-50% + (var(--scroll-y-smooth) * 0.15)))",
-        display: "flex",
         flexDirection: "column",
         gap: 2,
         zIndex: 2,
@@ -375,10 +399,7 @@ function HeroSection() {
         ))}
       </div>
 
-      <div style={{ position: "absolute", bottom: 40, left: 60, fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(255,255,255,.25)", display: "flex", alignItems: "center", gap: 12, animation: "fadeUp .3s .25s cubic-bezier(.16,1,.3,1) both", zIndex: 2 }}>
-        <span style={{ width: 1, height: 44, background: "linear-gradient(to bottom, #c0392b, transparent)", animation: "pulse 2s ease-in-out infinite", display: "block" }} />
-        Scroll
-      </div>
+
     </section>
   )
 }
@@ -433,33 +454,16 @@ function CSSCube({ size = 120, color1 = "#111", color2 = "#c0392b", speed = "12s
 
 function AboutSection() {
   return (
-    <section className="about-grid rv" style={{ padding: "120px 60px", background: "#f4f0e8", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 100, alignItems: "center", position: "relative", overflow: "hidden" }}>
+    <section className="about-grid rv" style={{ background: "#f4f0e8", display: "grid", alignItems: "center", position: "relative", overflow: "hidden" }}>
       <div style={{
-        position: "absolute",
-        top: "20%",
-        left: "5%",
-        width: 300,
-        height: 300,
-        borderRadius: "50%",
-        border: "1.5px solid rgba(192, 57, 43, 0.06)",
-        pointerEvents: "none",
-        transform: "translateY(calc(max(0px, var(--scroll-y-smooth) - 600px) * 0.12))",
-        transition: "transform 0s",
-        zIndex: 0
+        position: "absolute", top: "20%", left: "5%", width: 300, height: 300, borderRadius: "50%",
+        border: "1.5px solid rgba(192, 57, 43, 0.06)", pointerEvents: "none",
+        transform: "translateY(calc(max(0px, var(--scroll-y-smooth) - 600px) * 0.12))", transition: "transform 0s", zIndex: 0
       }} />
-
       <div style={{
-        position: "absolute",
-        bottom: "10%",
-        right: "15%",
-        width: 200,
-        height: 200,
-        borderRadius: "30px",
-        border: "1.5px solid rgba(17, 17, 17, 0.04)",
-        pointerEvents: "none",
-        transform: "rotate(45deg) translateY(calc(max(0px, var(--scroll-y-smooth) - 600px) * -0.08))",
-        transition: "transform 0s",
-        zIndex: 0
+        position: "absolute", bottom: "10%", right: "15%", width: 200, height: 200, borderRadius: "30px",
+        border: "1.5px solid rgba(17, 17, 17, 0.04)", pointerEvents: "none",
+        transform: "rotate(45deg) translateY(calc(max(0px, var(--scroll-y-smooth) - 600px) * -0.08))", transition: "transform 0s", zIndex: 0
       }} />
 
       <div style={{ position: "relative", zIndex: 1 }}>
@@ -475,12 +479,8 @@ function AboutSection() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 2 }}>
           {[["7", "d", "Landing Page"], ["21", "d", "Site Completo"], ["2", "×", "Revisões"]].map(([n, s, l], idx) => (
             <Card3D key={l} style={{
-              background: "#111",
-              padding: "28px 20px",
-              position: "relative",
-              overflow: "hidden",
-              transform: `translateY(calc(max(0px, var(--scroll-y-smooth) - 600px) * ${0.02 + idx * 0.02}))`,
-              transition: "transform 0s"
+              background: "#111", padding: "28px 20px", position: "relative", overflow: "hidden",
+              transform: `translateY(calc(max(0px, var(--scroll-y-smooth) - 600px) * ${0.02 + idx * 0.02}))`, transition: "transform 0s"
             }}>
               <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "3.2rem", fontWeight: 900, color: "#fff", lineHeight: 1, letterSpacing: "-0.02em" }}>{n}<sup style={{ fontSize: "1.2rem", color: "#c0392b" }}>{s}</sup></div>
               <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,.35)", marginTop: 6 }}>{l}</div>
@@ -489,16 +489,13 @@ function AboutSection() {
         </div>
       </div>
 
-      <div className="about-cubes" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 24, position: "relative", zIndex: 1 }}>
+      <div className="about-cubes" style={{ flexDirection: "column", alignItems: "center", gap: 24, position: "relative", zIndex: 1 }}>
         {[
           { size: 160, speed: "10s", color1: "#111", color2: "#c0392b", factor: -0.1 },
           { size: 120, speed: "8s", color1: "#c0392b", color2: "#333", factor: -0.22 },
           { size: 85, speed: "14s", color1: "#222", color2: "#a93226", factor: -0.35 },
         ].map((c, i) => (
-          <div key={i} style={{
-            transform: `translateY(calc(max(0px, var(--scroll-y-smooth) - 600px) * ${c.factor}))`,
-            transition: "transform 0s"
-          }}>
+          <div key={i} style={{ transform: `translateY(calc(max(0px, var(--scroll-y-smooth) - 600px) * ${c.factor}))`, transition: "transform 0s" }}>
             <CSSCube size={c.size} speed={c.speed} color1={c.color1} color2={c.color2} />
           </div>
         ))}
@@ -507,12 +504,12 @@ function AboutSection() {
   )
 }
 
-function PlanCard({ num, tag, name, price, period, features, deadline, featured }) {
+function PlanCard({ num, tag, name, price, period, features, deadline, featured, customPrice, wide }) {
   const cardRef = useRef(null)
   return (
     <div ref={cardRef} className="plan-card" style={{
       background: featured ? "#111" : "#ece8df",
-      padding: "40px 36px",
+      padding: wide ? "24px 36px" : "40px 36px",
       position: "relative",
       overflow: "hidden",
       borderTop: `3px solid ${featured ? "#c0392b" : "#111"}`,
@@ -520,32 +517,41 @@ function PlanCard({ num, tag, name, price, period, features, deadline, featured 
       boxShadow: "0 2px 20px rgba(0,0,0,.06)",
       marginTop: featured ? -24 : 0,
       transition: "transform .25s ease, box-shadow .25s ease",
-      cursor: "default"
+      cursor: "default",
+      height: "100%",
+      boxSizing: "border-box",
     }}
       onMouseEnter={() => { if (cardRef.current) { cardRef.current.style.transform = "translateY(-4px)"; cardRef.current.style.boxShadow = "0 8px 32px rgba(0,0,0,.1)" } }}
       onMouseLeave={() => { if (cardRef.current) { cardRef.current.style.transform = ""; cardRef.current.style.boxShadow = "0 2px 20px rgba(0,0,0,.06)" } }}>
       <div style={{
-        position: "absolute",
-        top: 20,
-        right: 28,
-        fontFamily: "'Barlow Condensed', sans-serif",
-        fontSize: "4.5rem",
-        fontWeight: 900,
+        position: "absolute", top: 20, right: 28,
+        fontFamily: "'Barlow Condensed', sans-serif", fontSize: "4.5rem", fontWeight: 900,
         color: featured ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
-        pointerEvents: "none",
-        lineHeight: 1
+        pointerEvents: "none", lineHeight: 1
       }}>{num}</div>
 
-      <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.26em", textTransform: "uppercase", color: "#c0392b", marginBottom: 20 }}>{tag}</div>
+      <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.26em", textTransform: "uppercase", color: "#c0392b", marginBottom: wide ? 8 : 20 }}>{tag}</div>
       <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "2.2rem", fontWeight: 900, textTransform: "uppercase", color: featured ? "#fff" : "#111", marginBottom: 4, lineHeight: 1 }}>{name}</div>
-      <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "4rem", fontWeight: 900, color: featured ? "#fff" : "#111", lineHeight: 1, margin: "20px 0 4px", letterSpacing: "-0.02em" }}>
-        <sup style={{ fontSize: "1.2rem", fontWeight: 700, color: "#c0392b", verticalAlign: "super" }}>R$</sup>{price}
+      <div style={{
+        fontFamily: "'Barlow Condensed',sans-serif",
+        fontSize: customPrice ? "clamp(1.5rem, 4vw, 2.2rem)" : "4rem",
+        fontWeight: 900,
+        color: featured ? "#fff" : "#111",
+        lineHeight: 1,
+        margin: wide ? "8px 0 4px" : "20px 0 4px",
+        letterSpacing: "-0.02em"
+      }}>
+        {customPrice ? (
+          <span style={{ color: "#c0392b", fontStyle: "italic" }}>{price}</span>
+        ) : (
+          <><sup style={{ fontSize: "1.2rem", fontWeight: 700, color: "#c0392b", verticalAlign: "super" }}>R$</sup>{price}</>
+        )}
       </div>
-      <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: featured ? "rgba(255,255,255,.3)" : "#999", marginBottom: 32 }}>{period}</div>
+      <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: featured ? "rgba(255,255,255,.3)" : "#999", marginBottom: wide ? 16 : 32 }}>{period}</div>
       <div style={{ height: 1, background: featured ? "rgba(255,255,255,.08)" : "rgba(0,0,0,.08)", marginBottom: 24 }} />
-      <ul style={{ listStyle: "none" }}>
+      <ul style={{ listStyle: "none", display: "flex", flexDirection: wide ? "row" : "column", flexWrap: "wrap", gap: wide ? "4px 16px" : 0 }}>
         {features.map((f, i) => (
-          <li key={i} style={{ display: "flex", gap: 10, padding: "8px 0", fontSize: "0.82rem", fontWeight: 500, color: f.off ? (featured ? "rgba(255,255,255,.35)" : "#999") : (featured ? "rgba(255,255,255,.65)" : "#444"), borderBottom: `1px solid ${featured ? "rgba(255,255,255,.06)" : "rgba(0,0,0,.06)"}` }}>
+          <li key={i} style={{ display: "flex", gap: 10, padding: wide ? "4px 0" : "8px 0", fontSize: "0.82rem", fontWeight: 500, color: f.off ? (featured ? "rgba(255,255,255,.35)" : "#999") : (featured ? "rgba(255,255,255,.65)" : "#444"), borderBottom: wide ? "none" : `1px solid ${featured ? "rgba(255,255,255,.06)" : "rgba(0,0,0,.06)"}`, flex: wide ? "0 0 33%" : "none" }}>
             <span style={{ flexShrink: 0, fontSize: "0.68rem", marginTop: 2, color: f.off ? "#666" : "#c0392b", fontWeight: 700 }}>{f.off ? "–" : "✓"}</span>
             {f.t}
           </li>
@@ -557,30 +563,99 @@ function PlanCard({ num, tag, name, price, period, features, deadline, featured 
 }
 
 const PLANS = [
-  { num: "01", tag: "Mais rápido", name: "Landing Page", price: "500", period: "Pagamento único", deadline: "Entrega em 7 dias úteis", features: [{ t: "Design exclusivo" }, { t: "Adaptado para celular" }, { t: "Formulário de contato / captação de leads" }, { t: "Conexão com WhatsApp" }, { t: "Otimização básica para Google (SEO)" }, { t: "Seções: banner, sobre, serviços, contato" }, { t: "Certificado SSL (HTTPS)" }, { t: "Até 6 páginas internas", off: 1 }, { t: "Seção de agendamento online", off: 1 }, { t: "Blog integrado", off: 1 }, { t: "Treinamento de uso incluído", off: 1 }] },
-  { num: "02", tag: "Mais completo", name: "Site Completo", price: "1.500", period: "Pagamento único", deadline: "Entrega em 21 dias úteis", featured: true, features: [{ t: "Design exclusivo" }, { t: "Adaptado para celular" }, { t: "Formulário de contato / captação de leads" }, { t: "Conexão com WhatsApp" }, { t: "Otimização básica para Google (SEO)" }, { t: "Seções: banner, sobre, serviços, contato" }, { t: "Certificado SSL (HTTPS)" }, { t: "Até 6 páginas internas" }, { t: "Seção de agendamento online" }, { t: "Blog integrado" }, { t: "Treinamento de uso incluído" }] },
-  { num: "03", tag: "Presença local", name: "Google Meu Neg.", price: "150", period: "Por mês", deadline: "Gestão mensal contínua", features: [{ t: "Criação e configuração completa do perfil" }, { t: "Otimização para aparecer no Google Maps" }, { t: "Resposta a avaliações e comentários" }, { t: "Publicação de posts / novidades — até 4 por mês" }, { t: "Atualização de informações (promoções, horários)" }, { t: "Relatório mensal de desempenho" }, { t: "SEO local e palavras-chave regionais" }] },
+  {
+    num: "01", tag: "Mais rápido", name: "Landing Page", price: "500", period: "Pagamento único", deadline: "Entrega em 7 dias úteis",
+    features: [{ t: "Design exclusivo" }, { t: "Adaptado para celular" }, { t: "Formulário de contato / captação de leads" }, { t: "Conexão com WhatsApp" }, { t: "Otimização básica para Google (SEO)" }, { t: "Seções: banner, sobre, serviços, contato" }, { t: "Certificado SSL (HTTPS)" }, { t: "Até 6 páginas internas", off: 1 }, { t: "Seção de agendamento online", off: 1 }, { t: "Blog integrado", off: 1 }, { t: "Treinamento de uso incluído", off: 1 }]
+  },
+  {
+    num: "02", tag: "Ideal para empresas", name: "Site Institucional Básico", price: "800", period: "Pagamento único", deadline: "Entrega em 10–15 dias úteis",
+    features: [{ t: "Design exclusivo" }, { t: "Adaptado para celular" }, { t: "Formulário de contato / captação de leads" }, { t: "Conexão com WhatsApp" }, { t: "Otimização básica para Google (SEO)" }, { t: "3 a 5 páginas (Home, Sobre, Serviços, Contato, Blog)" }, { t: "Certificado SSL (HTTPS)" }, { t: "Seção de agendamento online", off: 1 }, { t: "Treinamento de uso incluído", off: 1 }]
+  },
+  {
+    num: "03", tag: "Mais completo", name: "Site Completo", price: "1.500", period: "Pagamento único", deadline: "Entrega em 21 dias úteis", featured: true,
+    features: [{ t: "Design exclusivo" }, { t: "Adaptado para celular" }, { t: "Formulário de contato / captação de leads" }, { t: "Conexão com WhatsApp" }, { t: "Otimização básica para Google (SEO)" }, { t: "Seções: banner, sobre, serviços, contato" }, { t: "Certificado SSL (HTTPS)" }, { t: "Até 6 páginas internas" }, { t: "Seção de agendamento online" }, { t: "Blog integrado" }, { t: "Treinamento de uso incluído" }]
+  },
+  {
+    num: "04", tag: "Presença local", name: "Google Meu Neg.", price: "150", period: "Por mês", deadline: "Gestão mensal contínua",
+    features: [{ t: "Criação e configuração completa do perfil" }, { t: "Otimização para aparecer no Google Maps" }, { t: "Resposta a avaliações e comentários" }, { t: "Publicação de posts / novidades — até 4 por mês" }, { t: "Atualização de informações (promoções, horários)" }, { t: "Relatório mensal de desempenho" }, { t: "SEO local e palavras-chave regionais" }]
+  },
+  {
+    // ← NOVO: card Instagram Pro
+    num: "05", tag: "Presença social", name: "Instagram Profissional", price: "250", period: "Pagamento único + gestão opcional", deadline: "Entrega em 5 dias úteis",
+    features: [
+      { t: "Criação completa do perfil profissional" },
+      { t: "Bio otimizada com palavras-chave do seu negócio" },
+      { t: "Foto de perfil e capa padronizadas" },
+      { t: "Linktree configurado com seus serviços e links" },
+      { t: "Destaques organizados com capas personalizadas" },
+      { t: "Orientação de identidade visual para o feed" },
+      { t: "Gestão mensal do perfil — R$100/mês (opcional)" },
+      { t: "Criação de posts e stories", off: 1 },
+    ]
+  },
+  {
+    // ← NOVO: card Sistemas & Apps, preço personalizado conforme complexidade
+    num: "06", tag: "Sob medida", name: "Sistemas & Apps", price: "Personalizado", period: "De acordo com a complexidade", deadline: "Prazo definido conforme escopo", customPrice: true,
+    features: [
+      { t: "Sistemas web personalizados" },
+      { t: "Aplicativos mobile (Flutter)" },
+      { t: "Painéis administrativos e dashboards" },
+      { t: "Integração com banco de dados" },
+      { t: "Automatizações e ferramentas internas" },
+      { t: "Login, permissões e múltiplos usuários" },
+      { t: "Reunião de descoberta incluída" },
+      { t: "Orçamento sob análise do escopo" },
+    ]
+  },
 ]
 
 function PricingSection() {
   return (
-    <section className="pricing-section" style={{ padding: "120px 60px", background: "#f4f0e8" }} id="servicos">
-      <div className="rv pricing-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 60, borderBottom: "2px solid #111", paddingBottom: 24 }}>
+    <section className="pricing-section" style={{ background: "#f4f0e8" }} id="servicos">
+      <div className="rv pricing-header" style={{ display: "flex", justifyContent: "space-between", marginBottom: 60, borderBottom: "2px solid #111", paddingBottom: 24 }}>
         <h2 style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "clamp(2.5rem,5vw,5rem)", fontWeight: 900, textTransform: "uppercase", lineHeight: 0.9, letterSpacing: "-0.01em", color: "#111" }}>
           Planos &<br /><span style={{ color: "#c0392b", fontStyle: "italic" }}>Preços</span>
         </h2>
         <p style={{ fontSize: "0.82rem", color: "#888", maxWidth: 200, textAlign: "right", lineHeight: 1.6, fontWeight: 300 }}>Transparência total, entrega no prazo.</p>
       </div>
 
-      <div className="rv plans-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20, transitionDelay: ".08s", alignItems: "stretch" }}>
-        {PLANS.map((p, i) => (
-          <div key={i}>
-            <PlanCard {...p} />
-          </div>
-        ))}
+      {/* ← 6 planos: 4 em grid no topo, 2 empilhados verticalmente embaixo */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        <div
+          className="rv plans-grid"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gap: 20,
+            transitionDelay: ".08s",
+            alignItems: "start"
+          }}
+        >
+          {PLANS.slice(0, 4).map((p, i) => (
+            <div key={i}>
+              <PlanCard {...p} />
+            </div>
+          ))}
+        </div>
+        <div
+          className="rv"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 20,
+            transitionDelay: ".08s",
+            width: "100%"
+          }}
+        >
+          {PLANS.slice(4).map((p, i) => (
+            <div key={i} style={{ width: "100%" }}>
+              <PlanCard {...p} wide />
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="rv extras-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginTop: 20, transitionDelay: ".14s" }}>
+      <div className="rv extras-grid" style={{ display: "grid", gap: 20, marginTop: 20, transitionDelay: ".14s" }}>
         {[
           {
             title: "Manutenção\nMensal", priceEl: (
@@ -595,7 +670,7 @@ function PricingSection() {
           },
           {
             title: "Serviços\nAdicionais", priceEl: null,
-            items: [["Página extra além do plano", "R$ 120"], ["E-mail profissional @dominio", "R$ 100"], ["Integração Instagram / WhatsApp Business", "R$ 80"], ["Criação de logo básica", "R$ 100"], ["Relatório de acessos e SEO", "R$ 60/mês"]]
+            items: [["Página extra além do plano", "R$ 120"], ["E-mail profissional @dominio", "R$ 100"], ["Integração Instagram / WhatsApp Business", "R$ 80"], ["Criação de logo básica", "R$ 100"], ["Relatório de acessos e SEO", "R$ 60/mês"], ["Linktree personalizado", "R$ 35"]]
           }
         ].map((ex, i) => (
           <div key={i} style={{ background: "#ece8df", padding: "36px 32px", borderRadius: 8, boxShadow: "0 2px 20px rgba(0,0,0,.06)" }}>
@@ -616,7 +691,7 @@ function PricingSection() {
 
       <div className="rv" style={{ marginTop: 52, transitionDelay: ".2s" }}>
         <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.24em", textTransform: "uppercase", color: "#aaa", marginBottom: 14 }}>Condições gerais</div>
-        <div className="conditions-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        <div className="conditions-grid" style={{ display: "grid", gap: 12 }}>
           {[["Pagamento", "50% no início · 50% na entrega"], ["Revisões", "Até 2 rodadas de revisão incluídas"], ["Conteúdo", "Textos e imagens fornecidos pelo cliente"], ["Validade", "30 dias a partir da data de início"]].map(([k, v]) => (
             <div key={k} style={{ background: "#ece8df", padding: "18px 24px", display: "flex", gap: 18, alignItems: "baseline", borderRadius: 8 }}>
               <span style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#aaa", minWidth: 110, flexShrink: 0 }}>{k}</span>
@@ -627,7 +702,7 @@ function PricingSection() {
             <span style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#aaa", minWidth: 110, flexShrink: 0 }}>Domínio e<br />hospedagem</span>
             <span style={{ fontSize: "0.82rem", color: "#666", lineHeight: 1.5, fontWeight: 300 }}>Não inclusos — orientação para contratação disponível.</span>
           </div>
-          <div style={{ background: "#ece8df", padding: "18px 24px", display: "flex", gap: 18, alignItems: "baseline", gridColumn: "span 2", borderRadius: 8 }}>
+          <div className="conditions-wide" style={{ background: "#ece8df", padding: "18px 24px", display: "flex", gap: 18, alignItems: "baseline", borderRadius: 8 }}>
             <span style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#aaa", minWidth: 110, flexShrink: 0 }}>Obs.</span>
             <span style={{ fontSize: "0.82rem", color: "#666", lineHeight: 1.5, fontWeight: 300 }}>Valores sujeitos a ajuste conforme escopo. Proposta válida por 30 dias · Preços em Reais (R$) · Sujeito a contrato formal.</span>
           </div>
@@ -650,23 +725,13 @@ const SKILLS = [
 
 function SkillsSection() {
   return (
-    <section className="skills-section" style={{ padding: "120px 60px", background: "#111", position: "relative", overflow: "hidden" }} id="habilidades">
+    <section className="skills-section" style={{ background: "#111", position: "relative", overflow: "hidden" }} id="habilidades">
       <div style={{
-        position: "absolute",
-        top: "35%",
-        right: "-10%",
-        whiteSpace: "nowrap",
-        fontFamily: "'Barlow Condensed',sans-serif",
-        fontSize: "16vw",
-        fontWeight: 900,
-        textTransform: "uppercase",
-        letterSpacing: "0.05em",
-        color: "transparent",
-        WebkitTextStroke: "1px rgba(255,255,255,0.022)",
-        pointerEvents: "none",
-        zIndex: 0,
-        transform: "translateX(calc(max(0px, var(--scroll-y-smooth) - 1500px) * -0.2))",
-        transition: "transform 0s"
+        position: "absolute", top: "35%", right: "-10%", whiteSpace: "nowrap",
+        fontFamily: "'Barlow Condensed',sans-serif", fontSize: "16vw", fontWeight: 900,
+        textTransform: "uppercase", letterSpacing: "0.05em", color: "rgba(36, 36, 36, 0.04)",
+        WebkitTextStroke: "1px rgba(255,255,255,0.08)", pointerEvents: "none", zIndex: 0,
+        transform: "translateX(calc(max(0px, var(--scroll-y-smooth) - 1500px) * -0.2))", transition: "transform 0s"
       }}>
         EXCELÊNCIA ✦ PERFORMANCE ✦ FOCO ✦
       </div>
@@ -677,11 +742,11 @@ function SkillsSection() {
         </h2>
         <CSSCube size={90} speed="9s" color1="#1a1a1a" color2="#c0392b" />
       </div>
-      <div className="rv skills-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 2, transitionDelay: ".08s", position: "relative", zIndex: 1 }}>
+      <div className="rv skills-grid" style={{ display: "grid", gap: 2, transitionDelay: ".08s", position: "relative", zIndex: 1 }}>
         {SKILLS.map((s) => (
-          <Card3D key={s.n} style={{ background: "rgba(255,255,255,.03)", padding: "36px 26px", borderTop: "2px solid rgba(255,255,255,.06)" }}>
+          <Card3D key={s.n} style={{ background: "rgba(255,255,255,.03)", borderTop: "2px solid rgba(255,255,255,.06)" }}>
             <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,.2)", marginBottom: 24 }}>{s.n}</div>
-            <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "1.5rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.02em", color: "#fff", marginBottom: 8, lineHeight: 1 }}>{s.name}</div>
+            <div className="skill-name" style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "1.5rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.02em", color: "#fff", marginBottom: 8, lineHeight: 1 }}>{s.name}</div>
             <div style={{ fontSize: "0.75rem", lineHeight: 1.6, color: "rgba(255,255,255,.4)", fontWeight: 300 }}>{s.desc}</div>
           </Card3D>
         ))}
@@ -711,8 +776,8 @@ function ContactSection() {
     { href: "https://wa.me/5531985979676", name: "WhatsApp", sub: "Resposta rápida" },
   ]
   return (
-    <section className="contact-section" style={{ padding: "120px 60px 100px", background: "#f4f0e8" }} id="contato">
-      <div className="contact-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "start" }}>
+    <section className="contact-section" style={{ background: "#f4f0e8" }} id="contato">
+      <div className="contact-grid" style={{ display: "grid", alignItems: "start" }}>
         <div className="rv">
           <h2 style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "clamp(3.5rem,7vw,7rem)", fontWeight: 900, textTransform: "uppercase", lineHeight: 0.88, letterSpacing: "-0.01em", color: "#111", marginBottom: 24 }}>
             Vamos<br />trabalhar<br /><span style={{ fontStyle: "italic", color: "#c0392b" }}>juntos</span>
@@ -731,7 +796,7 @@ function ContactSection() {
 
 function Footer() {
   return (
-    <footer style={{ background: "#111", padding: "80px 60px 40px", fontFamily: "'Barlow Condensed',sans-serif", borderTop: "1px solid rgba(255,255,255,.05)", position: "relative", overflow: "hidden" }}>
+    <footer style={{ background: "#111", fontFamily: "'Barlow Condensed',sans-serif", borderTop: "1px solid rgba(255,255,255,.05)", position: "relative", overflow: "hidden" }}>
       <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,.005) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.005) 1px,transparent 1px)", backgroundSize: "40px 40px", pointerEvents: "none" }} />
 
       <div style={{ display: "flex", justifyContent: "center", alignItems: "baseline", fontSize: "clamp(4rem, 15vw, 11rem)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "-0.03em", color: "#fff", lineHeight: 1, marginBottom: 60, position: "relative", zIndex: 1 }}>
@@ -746,7 +811,7 @@ function Footer() {
         <span style={{ display: "inline-block", marginLeft: "0.22em", color: "#f4f0e8" }}>UM</span>
       </div>
 
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255,255,255,.08)", paddingTop: 30, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,.3)", position: "relative", zIndex: 1 }}>
+      <div className="footer-bottom" style={{ display: "flex", borderTop: "1px solid rgba(255,255,255,.08)", paddingTop: 30, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,.3)", position: "relative", zIndex: 1 }}>
         <div>© {new Date().getFullYear()} — Desenvolvimento Web & Design</div>
         <div style={{ display: "flex", gap: 32 }}>
           <span>Belo Horizonte, MG</span>
@@ -763,6 +828,11 @@ export default function App() {
 
   useEffect(() => {
     window.scrollTo(0, 0)
+    setTimeout(() => {
+      document.querySelectorAll(".rv").forEach(el => {
+        el.classList.add("in")
+      })
+    }, 200)
   }, [location.pathname])
 
   useReveal()
